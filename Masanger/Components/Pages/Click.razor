@@ -1,0 +1,20 @@
+@page "/Clicker"
+@rendermode InteractiveServer
+
+<PageTitle>Clicker</PageTitle>
+
+<h1>Clicker</h1>
+
+<p role="status">Current clicks: @CurrentClick</p>
+<button @onclick="clickButton">Click me</button>
+
+@code
+{
+
+    private int CurrentClick = 0;
+
+    private void clickButton()
+    {
+        CurrentClick++;
+    }
+}
