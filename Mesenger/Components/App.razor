@@ -1,20 +1,37 @@
-﻿<!DOCTYPE html>
+﻿@rendermode InteractiveServer
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <base href="/"/>
-    <link rel="stylesheet" href="bootstrap/bootstrap.min.css"/>
-    <link rel="stylesheet" href="app.css"/>
-    <link rel="stylesheet" href="Mesenger.styles.css"/>
-    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link rel="stylesheet" href="/bootstrap/app.css"/>
     <HeadOutlet/>
 </head>
-
 <body>
 <Routes/>
-<script src="_framework/blazor.web.js"></script>
+<img class="userIcon" src="bootstrap/Pictures/User.png">
+<div class="square"></div>
+<div class="inputData">
+    <input type="text" id="username">
+    <input type="password" id="password">
+</div>
+<button class="login" @onclick="SendInformation">Log In</button>
 </body>
 
 </html>
+
+@code
+{
+    void SendInformation()
+    {
+        //get password
+        //get login
+        //Send request to Entity framework
+        //If user dont find, send error
+        //Create session(dont know how)
+        //Open Messenger page
+    }
+}

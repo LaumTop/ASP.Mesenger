@@ -1,0 +1,75 @@
+html {
+    background-color: #006DB6;
+}
+
+.userIcon {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 10%;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; 
+}
+.login {
+    background-color: #006DB6;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 5%;
+    width: 13%;
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    border-radius: 10px;
+    box-shadow: 0 0 2px 2px #006DB6; /* Изменение тени */
+    border: none; /* Удаление границы */
+    font-family: "Montserrat SemiBold", fantasy;
+}
+
+.login:active
+{
+    background-color: #0062a6;
+}
+
+.inputData {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    border-radius: 10px;
+    box-shadow: 0 0 0 2px white;
+}
+
+.inputData input {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    color: #006DB6;
+    font-family: "Montserrat SemiBold", fantasy;
+}
+.square {
+    height: 600px;
+    width: 500px;
+    background-color: whitesmoke;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 30px;
+    box-shadow: 0 0 0 2px #006DB6;
+    z-index: 1; 
+}
