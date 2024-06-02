@@ -8,11 +8,13 @@ namespace Mesenger
         public int Id { get; set; } // Property with getter and setter for the primary key
         public string Username { get; set; } // Adjusted to use PascalCase for property names
         public string Password { get; set; }
+        public string Email { get; set; }
 
-        public User(string username, string password)
+        public User(string username, string password, string email)
         {
             Username = username;
             Password = password;
+            Email = email;
         }
     }
 }

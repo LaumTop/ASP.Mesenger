@@ -1,0 +1,24 @@
+@page "/Confirm"
+@rendermode InteractiveServer
+
+<img class="userIcon" src="bootstrap/Pictures/User.png" />
+<div class="square"></div>
+
+<div class="inputData">Verify your email address
+
+    <form enctype="text/plain">
+        <label for="numbers">Enter eight numbers:</label><br>
+        <input type="text" @bind="userSecretCode" id="numbers" name="numbers" minlength="8" maxlength="8" required><br>
+        <input @onclick="Testing"type="submit" value="Submit">
+    </form>
+</div>
+
+@code
+{
+    private int userSecretCode;
+
+    void Testing()
+    {
+        Console.WriteLine(userSecretCode);
+    }
+}
