@@ -10,4 +10,14 @@
       <None Include="wwwroot\bootstrap\Pictures\User.png" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="EntityFramework" Version="6.5.0-preview2-24180-01" />
+      <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0-preview.4.24267.1" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+      <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+      <PackageReference Include="System.Data.SQLite.Core" Version="1.0.118" />
+      <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.118" />
+      <PackageReference Include="System.Data.SQLite.Linq" Version="1.0.118" />
+    </ItemGroup>
+
 </Project>

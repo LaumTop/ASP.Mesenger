@@ -1,1 +1,87 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@using Newtonsoft.Json
+@using System.IO
+
+<img class="userIcon" src="bootstrap/Pictures/User.png" />
+<div class="square"></div>
+
+<div class="inputData">
+    <input type="text" id="username" @bind="username" placeholder="Login"/>
+    <input type="password" id="password" @bind="password" placeholder="Password"/>
+    <div class="errorUser">Invalid username or password</div>
+</div>
+<button class="login" @onclick="Login">LOG IN</button>
+
+@if (!userExists)
+{
+    <style>
+        .errorUser
+        {
+            display:  block;
+        }
+    </style>
+}
+@if (userExists)
+{
+<style>
+    .errorUser
+    {
+        display:  none;
+    }
+</style>
+}
+
+@code
+{
+    bool userExists = true;
+    private string username;
+    private string password;
+    private List<User> users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        string fileName = "users.json";
+        if (File.Exists(fileName))
+        {
+            string json = await File.ReadAllTextAsync(fileName);
+            users = JsonConvert.DeserializeObject<List<User>>(json);
+        }
+        else
+        {
+            users = new List<User>();
+        }
+    }
+
+    private async Task Register()
+    {
+        User newUser = new User(username, password);
+        users.Add(newUser);
+        await SaveUsers();
+    }
+
+    private async Task SaveUsers()
+    {
+        string fileName = "users.json";
+        string json = JsonConvert.SerializeObject(users);
+        await File.WriteAllTextAsync(fileName, json);
+    }
+
+    private async Task Login()
+    {
+        userExists = users.Any(u => u.Username == username && u.Password == password);
+        if (userExists)
+        {
+            Console.WriteLine(this.userExists);
+        }
+        else
+        {
+            Console.WriteLine(this.userExists);
+        }
+    }
+}

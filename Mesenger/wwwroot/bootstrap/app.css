@@ -1,7 +1,20 @@
 html {
     background-color: #006DB6;
 }
-
+.errorUser
+{
+    height: 5%;
+    width: 100%;
+    background-color: whitesmoke;
+    position: absolute;
+    top: 250%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 30px;
+    box-shadow: 0 0 0 2px whitesmoke;
+    z-index: 3;
+    color: red;
+}
 .userIcon {
     display: block;
     margin-left: auto;
@@ -48,6 +61,7 @@ html {
     z-index: 2;
     border-radius: 10px;
     box-shadow: 0 0 0 2px white;
+    text-align: center;
 }
 
 .inputData input {
@@ -60,6 +74,7 @@ html {
     border: 1px solid #ccc;
     color: #006DB6;
     font-family: "Montserrat SemiBold", fantasy;
+    text-align: center;
 }
 .square {
     height: 600px;
