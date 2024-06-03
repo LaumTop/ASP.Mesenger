@@ -1,6 +1,6 @@
 ﻿@page "/"
+@using Messenger.Models
 @rendermode InteractiveServer
-@using User = global::User
 
 <img class="userIcon" src="bootstrap/Pictures/User.png" />
 <div class="square"></div>
@@ -18,7 +18,7 @@
     private string username;
     private string password;
     private bool userExists = true;
-    private List<User> users;
+    private List<Users> users;
     private Json json = new Json();
 
     protected override async Task OnInitializedAsync()

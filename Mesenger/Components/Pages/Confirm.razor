@@ -1,5 +1,9 @@
 @page "/Confirm"
+@using Messenger.Models
+@using Messenger.Services
 @rendermode InteractiveServer
+@inject RegistrationService RegistrationService
+@inject NavigationManager NavigationManager
 
 <img class="userIcon" src="bootstrap/Pictures/User.png" />
 <div class="square"></div>
@@ -9,16 +13,53 @@
     <form enctype="text/plain">
         <label for="numbers">Enter eight numbers:</label><br>
         <input type="text" @bind="userSecretCode" id="numbers" name="numbers" minlength="8" maxlength="8" required><br>
-        <input @onclick="Testing"type="submit" value="Submit">
+        <input @onclick="FindCode"type="submit" value="Submit">
     </form>
 </div>
 
 @code
 {
-    private int userSecretCode;
-
-    void Testing()
+    private string userSecretCode;
+    private String confirmedEmail = null;
+    private String confirmedPassword = null;
+    private String confirmedNickname = null;
+    bool codefound = false;
+    bool requestedUser = false;
+    
+    Json json = new Json();
+    private async Task FindCode()
     {
-        Console.WriteLine(userSecretCode);
+        foreach (var item in RegistrationService.ConfirmRegister.ToList())
+        {
+            if (userSecretCode == item.Key)
+            {
+                codefound = true;
+                confirmedEmail = item.Value;
+                RegistrationService.ConfirmRegister.Remove(item);
+                break;
+            }
+        }
+
+        foreach (var item in RegistrationService.RequestedUsers)
+        {
+            if (confirmedEmail == item.Email)
+            {
+                requestedUser = true;
+                confirmedNickname = item.Username;
+                confirmedPassword = item.Password;
+                RegistrationService.RequestedUsers.Remove(item);
+                break;
+            }
+        }
+
+        if (requestedUser && codefound)
+        {
+            NavigationManager.NavigateTo("/");
+            List<Users> usersList = await json.LoadUsers();
+            Users user = new Users(confirmedNickname, confirmedPassword, confirmedEmail);
+            usersList.Add(user);
+            await json.SaveUsers(usersList);
+        }
+
     }
 }

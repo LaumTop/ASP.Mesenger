@@ -1,9 +1,13 @@
-@rendermode InteractiveServer
 @page "/Register"
+@rendermode InteractiveServer
 @using System.Net
 @using System.Net.Mail
 @using System.Text
 @using System.Text.RegularExpressions
+@using Messenger.Services
+@using Messenger.Models
+@inject NavigationManager NavigationManager
+@inject RegistrationService RegistrationService
 
 <img class="userIcon" src="bootstrap/Pictures/User.png" />
 <div class="square"></div>
@@ -16,10 +20,6 @@
 <button class="login" @onclick="Registers">Register</button>
 
 @code {
-    [Inject]
-    NavigationManager NavigationManager { get; set; }
-    List<KeyValuePair<string, string>> ConfirmRegister = new List<KeyValuePair<string, string>>();
-    List<string> secretCodes = new List<string>();
     private string username = "";
     private string password = "";
     private string email = "";
@@ -28,46 +28,21 @@
     private bool isPasswordValid = true;
     private bool isEmailValid = true;
 
-    private void Registers()
+    private async Task Registers()
     {
-        isUsernameValid = !string.IsNullOrEmpty(username) && username.Length >= 4;
-        isPasswordValid = !string.IsNullOrEmpty(password);
-        isEmailValid = IsValidEmail(email);
+        await ValidateInputs();
 
         if (isUsernameValid && isPasswordValid && isEmailValid)
         {
-            Random random = new Random();
-            bool finish = true;
+            var request = new Users(username, password, email);
+            RegistrationService.RequestedUsers.Add(request);  // Ensure the correct User class is used here
 
-            while (finish)
+            var code = await GenerateUniqueCode(); // await GenerateUniqueCode to get the code
+            if (code != null)
             {
-                StringBuilder code = new StringBuilder();
-                for (int i = 0; i < 8; i++)
-                {
-                    code.Append(random.Next(10));
-                }
-
-                if (!secretCodes.Contains(code.ToString()))
-                {
-                    finish = false;
-                    secretCodes.Add(code.ToString());
-                    ConfirmRegister.Add(new KeyValuePair<string, string>(code.ToString(), email));
-
-                    MailAddress sender = new MailAddress("LaumTopMessenger@gmail.com", "Laumtop Messenger");
-                    MailAddress to = new MailAddress(email);
-                    MailMessage message = new MailMessage(sender, to);
-                    message.Subject = "Finish Register";
-                    message.Body = "<h2>Please enter this code: " + code + "</h2>";
-                    message.IsBodyHtml = true;
-                    SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587);
-
-                    smtp.Credentials = new NetworkCredential("LaumTopMessenger@gmail.com", "");
-                    smtp.EnableSsl = true;
-
-                    // smtp.Send(message);
-                    Console.WriteLine("123213");
-                    NavigationManager.NavigateTo("/Confirm");
-                }
+                NavigationManager.NavigateTo("/Confirm");
+                SendConfirmationEmail(code, email);
+                RegistrationService.ConfirmRegister.Add(new KeyValuePair<string, string>(code, email));
             }
         }
         else
@@ -75,6 +50,90 @@
             Console.WriteLine($"{isUsernameValid} + {isPasswordValid} + {isEmailValid}");
         }
     }
+
+    private async Task ValidateInputs()
+    {
+        isUsernameValid = !string.IsNullOrEmpty(username) && username.Length >= 4 && await FindUser(username);
+        isPasswordValid = !string.IsNullOrEmpty(password);
+        isEmailValid = IsValidEmail(email);
+    }
+
+    private async Task<bool> FindUser(string username)
+    {
+        Json json = new Json();
+        bool answer = true;
+        foreach (var item in await json.LoadUsers())
+        {
+            if (item.Username == username)
+            {
+                answer = false;
+                break;
+            }
+        }
+
+        return answer;
+    }
+
+    private async Task<string> GenerateUniqueCode()
+    {
+        Random random = new Random();
+        StringBuilder code = new StringBuilder();
+
+        bool finish = true;
+        while (finish)
+        {
+            code.Clear();
+            for (int i = 0; i < 8; i++)
+            {
+                code.Append(random.Next(10));
+            }
+
+            if (!RegistrationService.SecretCodes.Contains(code.ToString()))
+            {
+                finish = false;
+                RegistrationService.SecretCodes.Add(code.ToString());
+                
+                _ = Task.Delay(TimeSpan.FromMinutes(5)).ContinueWith(_ =>
+                {
+                    string capturedCode = code.ToString();
+                    RegistrationService.SecretCodes.Remove(capturedCode);
+                    RegistrationService.ConfirmRegister.RemoveAll(kvp => kvp.Key == capturedCode);
+                });
+
+                return code.ToString();
+            }
+        }
+    
+        return null;
+    }
+
+    private void SendConfirmationEmail(string code, string email)
+    {
+        try
+        {
+            var sender = new MailAddress("LaumTopMessenger@gmail.com", "Laumtop Messenger");
+            var to = new MailAddress(email);
+            var message = new MailMessage(sender, to)
+            {
+                Subject = "Finish Register",
+                Body = $"<h2>Please enter this code: {code}</h2>",
+                IsBodyHtml = true
+            };
+
+            using var smtp = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential("LaumTopMessenger@gmail.com", ""),
+                EnableSsl = true
+            };
+
+            smtp.Send(message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error sending email: {ex.Message}");
+        }
+    }
+
     private string GetUsernameClass()
     {
         return isUsernameValid ? "Register_Login" : "Register_Login invalid";
@@ -99,8 +158,8 @@
 
         try
         {
-            string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
-            Regex regex = new Regex(pattern, RegexOptions.IgnoreCase);
+            const string pattern = @"^[^@\s]+@[^@\s]+\.[^@\s]+$";
+            var regex = new Regex(pattern, RegexOptions.IgnoreCase);
             return regex.IsMatch(email);
         }
         catch (Exception)

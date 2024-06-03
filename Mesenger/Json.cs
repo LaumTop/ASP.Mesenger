@@ -1,33 +1,31 @@
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Messenger.Models;
 using Newtonsoft.Json;
 
 public class Json
 {
-    public async Task<List<User>> LoadUsers()
+    private const string FileName = "users.json";
+
+    public async Task<List<Users>> LoadUsers()
     {
-        string fileName = "users.json";
-        List<User> users;
-        if (File.Exists(fileName))
+        List<Users> users;
+        if (File.Exists(FileName))
         {
-            string json = await File.ReadAllTextAsync(fileName);
-            users = JsonConvert.DeserializeObject<List<User>>(json);
+            string json = await File.ReadAllTextAsync(FileName);
+            users = JsonConvert.DeserializeObject<List<Users>>(json);
         }
         else
         {
-            users = new List<User>();
+            users = new List<Users>();
         }
         return users;
     }
 
-    public async Task SaveUsers(List<User> users)
+    public async Task SaveUsers(List<Users> users)
     {
-        string fileName = "users.json";
-        string json = JsonConvert.SerializeObject(users);
-        await File.WriteAllTextAsync(fileName, json);
+        string json = JsonConvert.SerializeObject(users, Formatting.Indented);
+        await File.WriteAllTextAsync(FileName, json);
     }
-}
-
-public class User
-{
-    public string Username { get; set; }
-    public string Password { get; set; }
 }
